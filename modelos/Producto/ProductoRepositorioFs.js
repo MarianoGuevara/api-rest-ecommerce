@@ -8,13 +8,15 @@ class ProductoRepositorioFs {
 
     async ObtenerTodosSinFiltrado() {
         try {
-
             let products = [];
+
             if (fs.existsSync(this.path)) {
                 products = await fs.promises.readFile(this.path, "utf-8");
+
                 if (products == "") {products = []}
                 else {products = JSON.parse(products);}
             }
+
             this.products = products;
             return this.products;
         } catch (error) {
@@ -24,18 +26,18 @@ class ProductoRepositorioFs {
 
     async ObtenerTodos() {
         try {
-
             let products = [];
+
             if (fs.existsSync(this.path)) {
                 products = await fs.promises.readFile(this.path, "utf-8");
                 if (products == "") {products = []}
                 else {products = JSON.parse(products);}
             }
+
             this.products = products.filter(p => p.status === true);;
             return this.products;
-        } catch (error) {
-            throw new Error(error);
-        }
+
+        } catch (error) {throw error;}
     }
 
     async GuardarUno(obj) {
@@ -65,36 +67,37 @@ class ProductoRepositorioFs {
                     return obj;
                 }
             }
-        } catch (error) {
-            throw error;
-        }
+        } catch (error) { throw error; }
     }
 
     async VerificarExistenciaLogica(obj) {
-        let retorno = false;
-        let p = await this.ObtenerTodos();
-        for (let i=0; i<p.length; i++) {
-            if (obj.title == p[i].title ) { 
-                // && obj.price == p[i].price
-                retorno = true;
-                break;
+        try{
+            let retorno = false;
+            let p = await this.ObtenerTodos();
+            for (let i=0; i<p.length; i++) {
+                if (obj.title == p[i].title ) { 
+                    // && obj.price == p[i].price
+                    retorno = true;
+                    break;
+                }
             }
-        }
-        if (retorno) {throw new Error("Ya existe en archivo") }
-        return retorno;
+            return retorno;
+        } catch (error) { throw error; }
     }
 
     async ObtenerPorId(id) {
-        let retorno = null;
-        let p = await this.ObtenerTodos();
-        for (let i=0; i<p.length; i++) {
-            if (id == p[i].id ) { 
-                retorno = p[i];
-                break;
+        try{
+            let retorno = undefined;
+            let p = await this.ObtenerTodos();
+            for (let i=0; i<p.length; i++) {
+                if (id == p[i].id ) { 
+                    retorno = p[i];
+                    break;
+                }
             }
-        }
-        if (retorno == null) {throw new Error("No existe producto con ese id") }
-        return retorno;
+            return retorno;
+
+        } catch (error) { throw error; }
     }
 
     //////// funciones propias de archivos
@@ -104,5 +107,4 @@ class ProductoRepositorioFs {
         return this.products.length + 1;
     }
 }
-
 module.exports = ProductoRepositorioFs;

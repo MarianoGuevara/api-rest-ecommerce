@@ -1,4 +1,5 @@
-const Product = require("./ProductoEntidad");
+const Validador = require("../../utiles/Validador");
+const ProductoEntidad = require("./ProductoEntidad");
 
 class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar EL MODELO: o agrego otro para persistencia o cambio el controlador
     constructor(persistencia) {
@@ -9,8 +10,8 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
         try {
             this.ValidarDatosProducto( title,description,code,price,status,stock,category,thumbnails);
 
-            const p = new Product(
-                0,
+            const p = new ProductoEntidad(
+                0, // le mando 0 porque lo genera la persistencia, no me interesa aca
                 title,
                 description,
                 code,
@@ -21,31 +22,24 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
                 thumbnails
             );
 
-            await this.persistencia.GuardarUno(p);
+            const rta = await this.persistencia.GuardarUno(p);
 
-            return p
-        } catch (error) {
-            throw error;
-        }
+            return rta;
+        } catch (error) {throw error;}
     }
 
     async LeerTodosProductos() {
         try { 
             const todos = await this.persistencia.ObtenerTodos();
             return todos;
-        } catch (error) {
-            throw error;
-        }
+        } catch (error) {throw error;}
     }
 
     async LeerProductoId(id) {
         try { 
             const producto = await this.persistencia.ObtenerPorId(id); // si no existe el objeto la persistencia debe devolver error, sea la persistencia que sea
             return producto;
-        } catch (error) {
-            console.log("erorrrrr")
-            throw error;
-        }
+        } catch (error) {throw error;}
     }
 
     async ActualizarProductoId(id, obj) { // reglas negocio: paso a paso logico; obtener prod id original, lo que mando el user actualizarlo, reflejarlo en la persistencia.
@@ -66,9 +60,7 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
             const actualizacion = await this.persistencia.Actualizar(productoOriginal);
 
             return actualizacion;
-        } catch (error) {
-            throw error;
-        }
+        } catch (error) {throw error;}
     }
 
     async BorrarLogicoProductoId(id) {       
@@ -78,31 +70,21 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
             const actualizacion = await this.persistencia.Actualizar(productoOriginal);
 
             return actualizacion;
-        } catch (error) {
-            throw error;
-        }
+        } catch (error) {throw error;}
     }
 
     ////
 
     ValidarDatosProducto(title,description,code,price,status,stock,category,thumbnails) { // la validacion la lleva el modelo por ser logica de negocio(?)
         try{
-            ProductoServicio.ValidarString(title, 10);
-            ProductoServicio.ValidarString(description, 10);
-            ProductoServicio.ValidarString(code, 3);
-            ProductoServicio.ValidarString(category, 5);
+            Validador.ValidarString(title, 10);
+            Validador.ValidarString(description, 10);
+            Validador.ValidarString(code, 3);
+            Validador.ValidarString(category, 5);
             
-            ProductoServicio.ValidarInt(price);
-            ProductoServicio.ValidarInt(stock);
+            Validador.ValidarInt(price);
+            Validador.ValidarInt(stock);
         } catch (error) {throw error;}
-    }
-
-    static ValidarString(val, min){
-        if (val.length < min) {throw new Error("String demasiado corto");}
-    }
-
-    static ValidarInt(val){
-        if (val < 1) {throw new Error("Numeros no menores a 1");}
     }
 }
 module.exports = ProductoServicio;

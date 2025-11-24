@@ -4,6 +4,7 @@ const puerto = 8080;
 app.use(express.json());
 
 const ProductoController = require("./controladores/ProductoController");
+const CarritoController = require("./controladores/CarritoController");
 
 const api = "/api"
 
@@ -24,6 +25,23 @@ app.route(api+"/products/:pid")
     })
     .delete((request, response) => {
         ProductoController.BorrarPorId(request,response);
+    })
+
+/////////
+
+app.route(api+"/carts")
+    .post((request, response) => {
+        CarritoController.Crear(request,response);
+    })
+
+app.route(api+"/carts/:cid")
+    .get((request, response) => {
+        CarritoController.ObtenerUno(request,response);
+    })
+
+app.route(api+"/carts/:cid/product/:pid")
+    .get((request, response) => {
+        CarritoController.AgregarProductoACarrito(request,response);
     })
 
 app.listen(puerto, ()=>{console.log("servidor levantado corrctamente")}) 
