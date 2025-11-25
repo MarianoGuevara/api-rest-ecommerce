@@ -3,15 +3,14 @@ const ProductoServicio = require("../modelos/Producto/ProductoServicio");
 
 class ProductoController {
     // los hago estaticos ""SINGLETON"": una sola instancia habra 
-    static persistencia = new ProductoRepositorioFs("data/products.json"); // este modelo voy a cambiar cuando haya bbdd
+    static persistencia = new ProductoRepositorioFs("data/products.json"); // esto voy a cambiar cuando haya bbdd
     static modelo = new ProductoServicio(ProductoController.persistencia);
 
-    static async Crear(request, response) {
-        console.log(request.body.title)
+    static async handleCrear(request, response) {
         const user_p = request.body
 
         try{
-            const obj = await ProductoController.modelo.CrearProducto(
+            const obj = await ProductoController.modelo.crear(
             user_p.title,
             user_p.description,
             user_p.code,
@@ -27,9 +26,9 @@ class ProductoController {
         }         
     }
 
-    static async TraerTodos(request, response) {
+    static async handleObtenerTodos(request, response) {
         try{
-            const all = await ProductoController.modelo.LeerTodosProductos();
+            const all = await ProductoController.modelo.obtenerTodos();
 
             response.send(all);
         } catch (error) {
@@ -37,10 +36,10 @@ class ProductoController {
         }         
     }
 
-    static async TraerPorId(request, response) {
+    static async handleObtenerPorId(request, response) {
         try{
             const id = request.params.pid;
-            const producto = await ProductoController.modelo.LeerProductoId(id);
+            const producto = await ProductoController.modelo.obtenerPorId(id);
 
             response.send(producto);
         } catch (error) {
@@ -48,12 +47,12 @@ class ProductoController {
         }         
     }
 
-    static async ActualizarPorId(request, response) {
+    static async handleModificar(request, response) {
         try{
             const id = request.params.pid;
             const obj = request.body;
 
-            const actualizacion = await ProductoController.modelo.ActualizarProductoId(id,obj);
+            const actualizacion = await ProductoController.modelo.modificar(id,obj);
 
             response.send({exito: actualizacion});
         } catch (error) {
@@ -61,11 +60,11 @@ class ProductoController {
         }         
     }
     
-    static async BorrarPorId(request, response) {
+    static async handleBorrar(request, response) {
         try{
             const id = request.params.pid;
 
-            const deleteLogico = await ProductoController.modelo.BorrarLogicoProductoId(id);
+            const deleteLogico = await ProductoController.modelo.borrar(id);
 
             response.send({exito: deleteLogico});
         } catch (error) {

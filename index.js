@@ -10,38 +10,38 @@ const api = "/api"
 
 app.route(api+"/products")
     .get((request, response) => {
-        ProductoController.TraerTodos(request,response);
+        ProductoController.handleObtenerTodos(request,response);
     })
     .post((request, response) => {
-        ProductoController.Crear(request,response);
+        ProductoController.handleCrear(request,response);
     })
 
 app.route(api+"/products/:pid")
     .get((request, response) => {
-        ProductoController.TraerPorId(request,response);
+        ProductoController.handleObtenerPorId(request,response);
     })
     .put((request, response) => {
-        ProductoController.ActualizarPorId(request,response);
+        ProductoController.handleModificar(request,response);
     })
     .delete((request, response) => {
-        ProductoController.BorrarPorId(request,response);
+        ProductoController.handleBorrar(request,response);
     })
 
 /////////
 
 app.route(api+"/carts")
     .post((request, response) => {
-        CarritoController.Crear(request,response);
+        CarritoController.handleCrear(request,response);
     })
 
 app.route(api+"/carts/:cid")
     .get((request, response) => {
-        CarritoController.ObtenerUno(request,response);
+        CarritoController.handleObtenerPorId(request,response);
     })
 
 app.route(api+"/carts/:cid/product/:pid")
     .get((request, response) => {
-        CarritoController.AgregarProductoACarrito(request,response);
+        CarritoController.handleModificar(request,response);
     })
 
 app.listen(puerto, ()=>{console.log("servidor levantado corrctamente")}) 

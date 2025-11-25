@@ -6,9 +6,9 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
         this.persistencia = persistencia;
     }
 
-    async CrearProducto(title,description,code,price,status,stock,category,thumbnails) {
+    async crear(title,description,code,price,status,stock,category,thumbnails) {
         try {
-            this.ValidarDatosProducto( title,description,code,price,status,stock,category,thumbnails);
+            this.validarDatosObjeto( title,description,code,price,status,stock,category,thumbnails);
 
             const p = new ProductoEntidad(
                 0, // le mando 0 porque lo genera la persistencia, no me interesa aca
@@ -22,29 +22,34 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
                 thumbnails
             );
 
-            const rta = await this.persistencia.GuardarUno(p);
+            const encontrado = await this.persistencia.obtenerPorTitulo(p.title);
+            if (encontrado !== undefined) {throw new Error("Ya existe el producto");}
 
+            const rta = await this.persistencia.crear(p); 
             return rta;
         } catch (error) {throw error;}
     }
 
-    async LeerTodosProductos() {
+    async obtenerTodos() {
         try { 
-            const todos = await this.persistencia.ObtenerTodos();
+            const todos = await this.persistencia.obtenerTodos();
             return todos;
         } catch (error) {throw error;}
     }
 
-    async LeerProductoId(id) {
+    async obtenerPorId(id) {
         try { 
-            const producto = await this.persistencia.ObtenerPorId(id); // si no existe el objeto la persistencia debe devolver error, sea la persistencia que sea
+            const producto = await this.persistencia.obtenerPorId(id);
+            if (producto === undefined) {throw new Error("No existe producto con ese id")}
+
             return producto;
         } catch (error) {throw error;}
     }
 
-    async ActualizarProductoId(id, obj) { // reglas negocio: paso a paso logico; obtener prod id original, lo que mando el user actualizarlo, reflejarlo en la persistencia.
+    async modificar(id, obj) { // reglas negocio: paso a paso logico; obtener prod id original, lo que mando el user actualizarlo, reflejarlo en la persistencia.
         try { 
-            let productoOriginal = await this.LeerProductoId(id);
+            let productoOriginal = await this.obtenerPorId(id);
+            console.log(productoOriginal);
 
             if (obj.title !== undefined) {productoOriginal.title = obj.title;}
             if (obj.price !== undefined) {productoOriginal.price = obj.price;}
@@ -55,35 +60,35 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
             if (obj.category !== undefined) {productoOriginal.category = obj.category;}
             if (obj.thumbnails !== undefined) {productoOriginal.thumbnails = obj.thumbnails;}
 
-            this.ValidarDatosProducto( productoOriginal.title,productoOriginal.description,productoOriginal.code,productoOriginal.price,productoOriginal.status,productoOriginal.stock,productoOriginal.category,productoOriginal.thumbnails);
+            this.validarDatosObjeto( productoOriginal.title,productoOriginal.description,productoOriginal.code,productoOriginal.price,productoOriginal.status,productoOriginal.stock,productoOriginal.category,productoOriginal.thumbnails);
 
-            const actualizacion = await this.persistencia.Actualizar(productoOriginal);
+            const actualizacion = await this.persistencia.modificar(productoOriginal);
 
             return actualizacion;
         } catch (error) {throw error;}
     }
 
-    async BorrarLogicoProductoId(id) {       
+    async borrar(id) {  // borrado logico
         try { 
-            let productoOriginal = await this.LeerProductoId(id);
+            let productoOriginal = await this.obtenerPorId(id);
             productoOriginal.status = false;
-            const actualizacion = await this.persistencia.Actualizar(productoOriginal);
+            const actualizacion = await this.persistencia.modificar(productoOriginal);
 
             return actualizacion;
         } catch (error) {throw error;}
     }
 
-    ////
+    ///////
 
-    ValidarDatosProducto(title,description,code,price,status,stock,category,thumbnails) { // la validacion la lleva el modelo por ser logica de negocio(?)
+    validarDatosObjeto(title,description,code,price,status,stock,category,thumbnails) { 
         try{
-            Validador.ValidarString(title, 10);
-            Validador.ValidarString(description, 10);
-            Validador.ValidarString(code, 3);
-            Validador.ValidarString(category, 5);
+            Validador.validarLargoString(title, 10);
+            Validador.validarLargoString(description, 10);
+            Validador.validarLargoString(code, 3);
+            Validador.validarLargoString(category, 5);
             
-            Validador.ValidarInt(price);
-            Validador.ValidarInt(stock);
+            Validador.validarRangoInt(price);
+            Validador.validarRangoInt(stock);
         } catch (error) {throw error;}
     }
 }

@@ -11,11 +11,11 @@ class CarritoController {
     static persistenciaCarrito = new CarritoRepositorioFs("data/carritos.json"); 
     static servicioCarrito = new CarritoServicio(CarritoController.persistenciaCarrito, CarritoController.servicioProducto);
 
-    static async Crear(request, response) {
+    static async handleCrear(request, response) {
         const user_p = request.body
 
         try{
-            const obj = await CarritoController.servicioCarrito.CrearCarrito(user_p.products);
+            const obj = await CarritoController.servicioCarrito.crear(user_p.products);
 
             response.send([{exito: obj}]);
         } catch (error) {
@@ -23,9 +23,9 @@ class CarritoController {
         }         
     }
 
-    static async ObtenerUno(request, response) {
+    static async handleObtenerPorId(request, response) {
         try{
-            const obj = await CarritoController.servicioCarrito.ObtenerPorId(request.params.cid);
+            const obj = await CarritoController.servicioCarrito.obtenerPorId(request.params.cid);
 
             response.send([{exito: obj}]);
         } catch (error) {
@@ -33,12 +33,12 @@ class CarritoController {
         }         
     }
 
-     static async AgregarProductoACarrito(request, response) {
+     static async handleModificar(request, response) {
         try{
             const idCarrito = request.params.cid
             const idProducto = request.params.pid
 
-            const obj = await CarritoController.servicioCarrito.AgregarACarrito(idCarrito, idProducto);
+            const obj = await CarritoController.servicioCarrito.modificar(idCarrito, idProducto);
 
             response.send([{exito: obj}]);
         } catch (error) {

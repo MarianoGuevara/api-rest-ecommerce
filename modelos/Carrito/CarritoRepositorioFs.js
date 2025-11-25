@@ -6,50 +6,26 @@ class CarritoRepositorioFs {
         this.carritos = [];
     }
 
-    async ObtenerTodos() {
+    async obtenerTodos() {
         try {
             if (this.carritos.length == 0) {
-                
                 let carritos = [];
+
                 if (fs.existsSync(this.path)) {
                     carritos = await fs.promises.readFile(this.path, "utf-8"); // si esto esta vacio devuelve string vacio
-                    
-                    if (carritos == "") { carritos = []; }
-                    else { carritos = JSON.parse(carritos); }
-                    this.carritos = carritos;
+                    if (carritos != "") { carritos = JSON.parse(carritos);}
                 }
+                this.carritos = carritos;
             }
             
             return this.carritos;
-        } catch (error) {
-            throw new Error("Error al obtener todos - " + error.message);
-        }
+        } catch (error) {throw error;}
     }
 
-    async GuardarUno(obj) {
-       try {
-            await this.ObtenerTodos();
-            
-            let id = await this.GenerarId();
-            obj.id = id;
-            
-            this.carritos.push(obj);
-
-            await fs.promises.writeFile(this.path, JSON.stringify(this.carritos));
-            return obj;
-        } catch (error) {
-            throw new Error("Error al guardar un carrito nuevo - " + error.message);
-        }
-    }
-
-    async AgregarProducto(idCarro, idProd, cantidad) {
-
-    }
-
-    async ObtenerPorId(id) {
+     async obtenerPorId(id) {
         try{
             let retorno = undefined;
-            await this.ObtenerTodos();
+            await this.obtenerTodos();
 
             for (let i=0; i<this.carritos.length; i++) {
                 if (id == this.carritos[i].id ) { 
@@ -61,9 +37,23 @@ class CarritoRepositorioFs {
         } catch (error) {throw error;}
     }
 
-    async Actualizar(obj) {
+    async crear(obj) {
+       try {
+            await this.obtenerTodos();
+            
+            let id = await this.generarIdArchivos();
+            obj.id = id;
+            
+            this.carritos.push(obj);
+
+            await fs.promises.writeFile(this.path, JSON.stringify(this.carritos));
+            return obj;
+        } catch (error) {throw error;}
+    }
+
+    async modificar(obj) {
          try {
-            await this.ObtenerTodos();
+            await this.obtenerTodos();
             
             for (let i=0; i<this.carritos.length; i++) {
                 if (obj.id == this.carritos[i].id ) { 
@@ -75,8 +65,8 @@ class CarritoRepositorioFs {
         } catch (error) {throw error;}
     }
 
-    async GenerarId() { 
-        await this.ObtenerTodos();
+    async generarIdArchivos() { 
+        await this.obtenerTodos();
         return this.carritos.length + 1;
     }
 }
