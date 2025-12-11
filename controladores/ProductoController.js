@@ -1,7 +1,7 @@
-const ProductoRepositorioFs = require("../modelos/Producto/ProductoRepositorioFs");
-const ProductoServicio = require("../modelos/Producto/ProductoServicio");
+import ProductoRepositorioFs from "../modelos/Producto/ProductoRepositorioFs.js";
+import ProductoServicio from "../modelos/Producto/ProductoServicio.js";
 
-class ProductoController {
+export default class ProductoController {
     // los hago estaticos ""SINGLETON"": una sola instancia habra 
     static persistencia = new ProductoRepositorioFs("data/products.json"); // esto voy a cambiar cuando haya bbdd
     static modelo = new ProductoServicio(ProductoController.persistencia);
@@ -72,4 +72,3 @@ class ProductoController {
         }         
     }
 }
-module.exports = ProductoController;

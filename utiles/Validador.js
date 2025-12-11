@@ -1,4 +1,4 @@
-class Validador {
+export default class Validador {
     static castearInt(val) {
         if (isNaN(parseInt(val))) {throw new Error("Nan");}
         else {return parseInt(val);}
@@ -12,4 +12,3 @@ class Validador {
         if (val < min) {throw new Error("Numeros no menores a ",min);}
     }
 }
-module.exports = Validador;

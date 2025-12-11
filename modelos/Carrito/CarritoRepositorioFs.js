@@ -1,6 +1,6 @@
-const fs = require("fs");
+import fs from "fs";
 
-class CarritoRepositorioFs {
+export default class CarritoRepositorioFs {
     constructor(path) {
         this.path = path;
         this.carritos = [];
@@ -70,4 +70,3 @@ class CarritoRepositorioFs {
         return this.carritos.length + 1;
     }
 }
-module.exports = CarritoRepositorioFs;

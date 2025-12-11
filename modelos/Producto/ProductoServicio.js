@@ -1,7 +1,7 @@
-const Validador = require("../../utiles/Validador");
-const ProductoEntidad = require("./ProductoEntidad");
+import Validador from "../../utiles/Validador.js";
+import ProductoEntidad from "./ProductoEntidad.js";
 
-class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar EL MODELO: o agrego otro para persistencia o cambio el controlador
+export default class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar EL MODELO: o agrego otro para persistencia o cambio el controlador
     constructor(persistencia) {
         this.persistencia = persistencia;
     }
@@ -92,4 +92,3 @@ class ProductoServicio { // la idea es que pase lo que pase no tenga que tocar E
         } catch (error) {throw error;}
     }
 }
-module.exports = ProductoServicio;

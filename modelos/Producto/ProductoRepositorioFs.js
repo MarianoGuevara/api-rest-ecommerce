@@ -1,6 +1,6 @@
-const fs = require("fs");
+import fs from "fs";
 
-class ProductoRepositorioFs {
+export default class ProductoRepositorioFs {
     constructor(path) {
         this.path = path;
         this.products = [];
@@ -106,4 +106,3 @@ class ProductoRepositorioFs {
         return this.products.length + 1;
     }
 }
-module.exports = ProductoRepositorioFs;

@@ -9,9 +9,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "express": "^5.1.0",
+    "express-handlebars": "^8.0.4",
     "filesystem": "^1.0.1",
     "fs": "^0.0.1-security"
   }

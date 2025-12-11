@@ -1,8 +1,7 @@
-const Validador = require("../../utiles/Validador");
-const CarritoEntidad = require("./CarritoEntidad");
+import Validador from "../../utiles/Validador.js";
+import CarritoEntidad from "./CarritoEntidad.js";
 
-
-class CarritoServicio {
+export default class CarritoServicio {
     constructor(persistencia, productoServicio) {
         this.persistencia = persistencia;
         this.productoServicio = productoServicio; // como mi regla de negocio estipula que tengo que verificar si el producto existe en el carrito, 
@@ -83,4 +82,3 @@ class CarritoServicio {
         } catch(e) {throw e;}
     }
 }
-module.exports = CarritoServicio;

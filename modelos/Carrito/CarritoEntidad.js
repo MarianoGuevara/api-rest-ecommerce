@@ -1,4 +1,4 @@
-class CarritoEntidad {
+export default class CarritoEntidad {
     constructor(
         id,
         products
@@ -7,4 +7,3 @@ class CarritoEntidad {
         this.products = products;
     }
 }
-module.exports = CarritoEntidad;

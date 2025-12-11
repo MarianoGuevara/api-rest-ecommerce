@@ -1,4 +1,4 @@
-class ProductoEntidad {
+export default class ProductoEntidad {
     constructor(
         id,
         title,
@@ -21,4 +21,3 @@ class ProductoEntidad {
         this.thumbnails = thumbnails;
     }
 }
-module.exports = ProductoEntidad;

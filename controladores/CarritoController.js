@@ -1,9 +1,9 @@
-const CarritoRepositorioFs = require("../modelos/Carrito/CarritoRepositorioFs");
-const CarritoServicio = require("../modelos/Carrito/CarritoServicio");
-const ProductoRepositorioFs = require("../modelos/Producto/ProductoRepositorioFs");
-const ProductoServicio = require("../modelos/Producto/ProductoServicio");
+import CarritoRepositorioFs from "../modelos/Carrito/CarritoRepositorioFs.js";
+import CarritoServicio from "../modelos/Carrito/CarritoServicio.js";
+import ProductoRepositorioFs from "../modelos/Producto/ProductoRepositorioFs.js";
+import ProductoServicio from "../modelos/Producto/ProductoServicio.js";
 
-class CarritoController {
+export default class CarritoController {
     
     static persistenciaProducto = new ProductoRepositorioFs("data/products.json"); 
     static servicioProducto = new ProductoServicio(CarritoController.persistenciaProducto);
@@ -46,4 +46,3 @@ class CarritoController {
         }         
     }
 }
-module.exports = CarritoController;
