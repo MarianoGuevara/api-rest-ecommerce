@@ -9,6 +9,6 @@ export default class Validador {
     }
 
     static validarRangoInt(val, min=1){
-        if (val < min) {throw new Error("Numeros no menores a ",min);}
+        if (val < min) {throw new Error("Numeros no menores a " + min);}
     }
 }

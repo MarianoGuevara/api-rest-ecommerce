@@ -17,9 +17,9 @@ export default class CarritoController {
         try{
             const obj = await CarritoController.servicioCarrito.crear(user_p.products);
 
-            response.send([{exito: obj}]);
+            response.send({exito: obj});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 
@@ -27,9 +27,9 @@ export default class CarritoController {
         try{
             const obj = await CarritoController.servicioCarrito.obtenerPorId(request.params.cid);
 
-            response.send([{exito: obj}]);
+            response.send({exito: obj});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 
@@ -40,9 +40,9 @@ export default class CarritoController {
 
             const obj = await CarritoController.servicioCarrito.modificar(idCarrito, idProducto);
 
-            response.send([{exito: obj}]);
+            response.send({exito: obj});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 }

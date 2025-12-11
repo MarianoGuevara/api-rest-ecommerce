@@ -6,20 +6,21 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
         this.persistencia = persistencia;
     }
 
-    async crear(title,description,code,price,status,stock,category,thumbnails) {
+    async crear(datos) {
         try {
-            this.validarDatosObjeto( title,description,code,price,status,stock,category,thumbnails);
+            this.validarDatosObjetoTipo(datos);
+            this.validarDatosObjetoRangos(datos);
 
             const p = new ProductoEntidad(
                 0, // le mando 0 porque lo genera la persistencia, no me interesa aca
-                title,
-                description,
-                code,
-                price,
-                status,
-                stock,
-                category,
-                thumbnails
+                datos.title,
+                datos.description,
+                datos.code,
+                datos.price,
+                datos.status,
+                datos.stock,
+                datos.category,
+                datos.thumbnails
             );
 
             const encontrado = await this.persistencia.obtenerPorTitulo(p.title);
@@ -60,7 +61,7 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
             if (obj.category !== undefined) {productoOriginal.category = obj.category;}
             if (obj.thumbnails !== undefined) {productoOriginal.thumbnails = obj.thumbnails;}
 
-            this.validarDatosObjeto( productoOriginal.title,productoOriginal.description,productoOriginal.code,productoOriginal.price,productoOriginal.status,productoOriginal.stock,productoOriginal.category,productoOriginal.thumbnails);
+            this.ProductoValidadorLens( productoOriginal.title,productoOriginal.description,productoOriginal.code,productoOriginal.price,productoOriginal.status,productoOriginal.stock,productoOriginal.category,productoOriginal.thumbnails);
 
             const actualizacion = await this.persistencia.modificar(productoOriginal);
 
@@ -80,15 +81,32 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
 
     ///////
 
-    validarDatosObjeto(title,description,code,price,status,stock,category,thumbnails) { 
+    validarDatosObjetoTipo(datos) {
         try{
-            Validador.validarLargoString(title, 10);
-            Validador.validarLargoString(description, 10);
-            Validador.validarLargoString(code, 3);
-            Validador.validarLargoString(category, 5);
-            
-            Validador.validarRangoInt(price);
-            Validador.validarRangoInt(stock);
+            if (!datos.title || typeof datos.title !== "string") {throw new Error("tiene que haber titulo y ser string");}       
+            if (!datos.description || typeof datos.description !== "string") {throw new Error("tiene que haber descripcion y ser string");} 
+            if (!datos.code || typeof datos.code !== "string") {throw new Error("tiene que haber codigo y ser string");}        
+            if (!datos.price || typeof datos.price !== "number") {throw new Error("tiene que haber precio y ser numero");} 
+            if (!datos.status || typeof datos.status !== "boolean") {throw new Error("tiene que haber precio y ser booleano");}
+            if (!datos.stock || typeof datos.stock !== "number") {throw new Error("tiene que haber stock y ser numero");} 
+            if (!datos.category  || typeof datos.category  !== "string") {throw new Error("tiene que haber categoria y ser string");}    
+            if (!Array.isArray(datos.thumbnails)) {throw new Error("tiene que haber 'thumbnail y ser array");}  
+            else {
+                console.log(datos.thumbnails);
+                for (let i=0; i<datos.thumbnails.length;i++){
+                    if (typeof datos.thumbnails[i] !== "string") {throw new Error("cada elemento de thumbnail debe ser string");}
+                }
+            }
         } catch (error) {throw error;}
+    };
+
+    validarDatosObjetoRangos(datos) { 
+        Validador.validarLargoString(datos.title, 10);
+        Validador.validarLargoString(datos.description, 10);
+        Validador.validarLargoString(datos.code, 3);
+        Validador.validarLargoString(datos.category, 5);
+        
+        Validador.validarRangoInt(datos.price);
+        Validador.validarRangoInt(datos.stock);
     }
 }

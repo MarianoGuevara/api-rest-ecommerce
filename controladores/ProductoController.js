@@ -10,19 +10,11 @@ export default class ProductoController {
         const user_p = request.body
 
         try{
-            const obj = await ProductoController.modelo.crear(
-            user_p.title,
-            user_p.description,
-            user_p.code,
-            user_p.price,
-            user_p.status,
-            user_p.stock,
-            user_p.category,
-            user_p.thumbnails);
+            const obj = await ProductoController.modelo.crear(user_p);
 
-            response.send([{exito: obj}]);
+            response.send({exito: obj});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 
@@ -32,7 +24,7 @@ export default class ProductoController {
 
             response.send(all);
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 
@@ -43,7 +35,7 @@ export default class ProductoController {
 
             response.send(producto);
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 
@@ -56,7 +48,7 @@ export default class ProductoController {
 
             response.send({exito: actualizacion});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
     
@@ -68,7 +60,7 @@ export default class ProductoController {
 
             response.send({exito: deleteLogico});
         } catch (error) {
-            response.send([{error: error.message}]);
+            response.send({error: error.message});
         }         
     }
 }

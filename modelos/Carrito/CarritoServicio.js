@@ -10,13 +10,13 @@ export default class CarritoServicio {
 
     async crear(productos) { // no necesito verificar, como en producto, que no haya otro igual pq si pueden haber 2 carros iguales
         try{
-            this.validarDatosObjeto(productos);
+            await this.validarDatosObjeto(productos);
 
             const c = new CarritoEntidad(0, productos)
 
             const rta = await this.persistencia.crear(c);
             return rta;
-        } catch(e) {throw e;}
+        } catch(error) {throw error;}
     } 
     
     async obtenerPorId(id) {
@@ -27,7 +27,7 @@ export default class CarritoServicio {
             if (rta === undefined) {throw new Error("No existe carrito con ese id");}
 
             return rta;
-        } catch(e) {throw e;}
+        } catch(error) {throw error;}
     }
                                             // estoy modificando un carrito: o le agrego cantidad o le agrego un producto nuevo
     async modificar(idCarrito, idProduct) { // logica negocio: 1ero verificar q sean enteros los datos. desp verificar q existan los id en la persistencia. Despues agregarle el producto a carro verificando si existia previamente ya
@@ -49,10 +49,21 @@ export default class CarritoServicio {
             const rta = await this.persistencia.modificar(carrito);
             return rta;
 
-        } catch(e) {throw e;}
+        } catch(error) {throw error;}
     }
 
     ///////
+
+    async validarDatosObjeto(products) { // Las reglas de negocio dicen que el array de productos debe tener el sig formato: {productId: 2, quantity: 2}
+        try {
+            if (Array.isArray(products) == false) {throw new Error("tipo incorrecto para carrito")}
+            
+            for (let i=0; i<products.length; i++) {
+                this.validarProductoDeCarrito(products[i]);
+                await this.productoServicio.obtenerPorId(products[i].productId)
+            }
+        } catch(error) {throw error;}
+    }
 
     verificarProductoEnCarrito(carrito, producto) {
         let indice = -1;
@@ -66,19 +77,12 @@ export default class CarritoServicio {
         return indice;
     }
 
-    validarDatosObjeto(products) { // Las reglas de negocio dicen que el array de productos debe tener el sig formato: {productId: 2, quantity: 2}
-        try {
-            if (Array.isArray(products) == false) {throw new Error("tipo incorrecto para carrito")}
-            
-            for (let i=0; i<products.length; i++) {this.validarProductoDeCarrito(products[i]);}
-        } catch(e) {throw e;}
-    }
-
     validarProductoDeCarrito(p){
         try {
-            if (p.productId == undefined) {throw new Error("key indefinida para carrito")}
-            if (p.quantity == undefined) {throw new Error("key indefinida para carrito")}
-            Validador.validarRangoInt(p[i]);
-        } catch(e) {throw e;}
+            if (p.productId == undefined || typeof p.productId !== "number" ) {throw new Error("id para producto de carrito debe existir y ser numerico")}
+            if (p.quantity == undefined || typeof p.quantity !== "number" ) {throw new Error("cantidad para producto de carrito debe existir y ser numerico")}
+            Validador.validarRangoInt(p.quantity);
+            Validador.validarRangoInt(p.productId);
+        } catch(error) {throw error;}
     }
 }
