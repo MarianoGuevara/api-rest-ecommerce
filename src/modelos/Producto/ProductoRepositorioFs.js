@@ -23,16 +23,15 @@ export default class ProductoRepositorioFs {
 
     async obtenerTodos() {
         try {
-            if (this.products.length == 0) {
-                let products = [];
+            let products = [];
 
-                if (fs.existsSync(this.path)) {
-                    products = await fs.promises.readFile(this.path, "utf-8");    
-                    if (products != "") { products = JSON.parse(products); }
-                }
-
-                this.products = products.filter(p => p.status === true);;    
+            if (fs.existsSync(this.path)) {
+                products = await fs.promises.readFile(this.path, "utf-8");    
+                if (products != "") { products = JSON.parse(products); }
             }
+
+            this.products = products.filter(p => p.status === true);;    
+            
             
             return this.products;
 

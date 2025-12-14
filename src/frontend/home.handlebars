@@ -1,0 +1,27 @@
+<h1>Productos en tiempo real</h1>
+
+<ul id="lista"></ul>
+
+<h3>Agregar producto</h3>
+<form id="formulario">
+    <input id="title" placeholder="Título" required>
+    <input id="description" placeholder="Descripción" required>
+    <input id="code" placeholder="Código" required>
+    <input id="price" type="number" placeholder="Precio" required>
+    <input id="stock" type="number" placeholder="Stock" required>
+    <input id="category" placeholder="Categoría" required>
+    <input id="thumbnails" placeholder="Thumbnails (url1,url2)">
+    
+    <button type="submit">Agregar</button>
+</form>
+
+<h3>Eliminar producto</h3>
+<form id="formularioDos">
+    <input id="id" placeholder="Título" required>
+    <button type="submit">Borrar</button>
+</form>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/homehandlebar.js"></script>

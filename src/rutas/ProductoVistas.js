@@ -21,5 +21,10 @@ router.route("/products/:pid")
     .delete((request, response) => {
         ProductoController.handleBorrar(request,response);
     })
+
+router.route("/realtimeproducts")
+    .get((request, response) => {
+        response.render("home")
+    })
     
 export default router;
