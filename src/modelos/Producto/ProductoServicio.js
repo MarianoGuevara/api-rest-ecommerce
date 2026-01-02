@@ -92,7 +92,7 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
             if (!datos.category  || typeof datos.category  !== "string") {throw new Error("tiene que haber categoria y ser string");}    
             if (!Array.isArray(datos.thumbnails)) {throw new Error("tiene que haber 'thumbnail y ser array");}  
             else {
-                console.log(datos.thumbnails);
+                // console.log(datos.thumbnails);
                 for (let i=0; i<datos.thumbnails.length;i++){
                     if (typeof datos.thumbnails[i] !== "string") {throw new Error("cada elemento de thumbnail debe ser string");}
                 }

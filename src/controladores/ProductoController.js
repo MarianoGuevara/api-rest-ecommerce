@@ -1,10 +1,15 @@
 import ProductoRepositorioFs from "../modelos/Producto/ProductoRepositorioFs.js";
+import ProductoRepositorioMongo from "../modelos/Producto/ProductoRepositorioMongo/ProductoRepositorioMongo.js";
 import ProductoServicio from "../modelos/Producto/ProductoServicio.js";
 
 export default class ProductoController {
-    // los hago estaticos ""SINGLETON"": una sola instancia habra 
-    static persistencia = new ProductoRepositorioFs("data/products.json"); // esto voy a cambiar cuando haya bbdd
+    // // los hago estaticos ""SINGLETON"": una sola instancia habra 
+    // static persistencia = new ProductoRepositorioFs("data/products.json"); // esto voy a cambiar cuando haya bbdd
+    // static servicio = new ProductoServicio(ProductoController.persistencia);
+    
+    static persistencia = new ProductoRepositorioMongo(process.env.CONNECTIONSTRING); 
     static servicio = new ProductoServicio(ProductoController.persistencia);
+
 
     static async handleCrear(request, response) {
         const user_p = request.body
