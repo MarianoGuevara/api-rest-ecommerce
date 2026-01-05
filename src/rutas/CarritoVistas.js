@@ -17,5 +17,9 @@ router.route("/carts/:cid/product/:pid")
     .get((request, response) => {
         CarritoController.handleModificar(request,response);
     })
+    .delete((request, response) => {
+        CarritoController.handleBorrar(request,response);
+    })
 
+    
 export default router;

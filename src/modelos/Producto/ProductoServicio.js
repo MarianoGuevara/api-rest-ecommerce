@@ -61,7 +61,8 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
             if (obj.category !== undefined) {productoOriginal.category = obj.category;}
             if (obj.thumbnails !== undefined) {productoOriginal.thumbnails = obj.thumbnails;}
 
-            this.ProductoValidadorLens( productoOriginal.title,productoOriginal.description,productoOriginal.code,productoOriginal.price,productoOriginal.status,productoOriginal.stock,productoOriginal.category,productoOriginal.thumbnails);
+            this.validarDatosObjetoTipo(productoOriginal);
+            this.validarDatosObjetoRangos( productoOriginal);
 
             const actualizacion = await this.persistencia.modificar(productoOriginal);
 
@@ -69,13 +70,18 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
         } catch (error) {throw error;}
     }
 
-    async borrar(id) {  // borrado logico
+    async borrar(id) {  
         try { 
-            let productoOriginal = await this.obtenerPorId(id);
-            productoOriginal.status = false;
-            const actualizacion = await this.persistencia.modificar(productoOriginal);
+            // // borrado logico
+            // let productoOriginal = await this.obtenerPorId(id);
+            // productoOriginal.status = false;
+            // const actualizacion = await this.persistencia.modificar(productoOriginal);
+            // return actualizacion;
 
-            return actualizacion;
+            // borrado literal (solo lo programe para mongo, las reglas de negocio hasta antes establecian que el borrado era logico)
+            if (id == undefined ) {throw new Error("id debe existir para borrar")};
+            const borrado = await this.persistencia.borrar(id);
+            return borrado;
         } catch (error) {throw error;}
     }
 
@@ -92,7 +98,7 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
             if (!datos.category  || typeof datos.category  !== "string") {throw new Error("tiene que haber categoria y ser string");}    
             if (!Array.isArray(datos.thumbnails)) {throw new Error("tiene que haber 'thumbnail y ser array");}  
             else {
-                // console.log(datos.thumbnails);
+                console.log(datos.thumbnails);
                 for (let i=0; i<datos.thumbnails.length;i++){
                     if (typeof datos.thumbnails[i] !== "string") {throw new Error("cada elemento de thumbnail debe ser string");}
                 }

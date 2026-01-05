@@ -1,4 +1,4 @@
-import ProductoRepositorioFs from "../modelos/Producto/ProductoRepositorioFs.js";
+// import ProductoRepositorioFs from "../modelos/Producto/ProductoRepositorioFs.js";
 import ProductoRepositorioMongo from "../modelos/Producto/ProductoRepositorioMongo/ProductoRepositorioMongo.js";
 import ProductoServicio from "../modelos/Producto/ProductoServicio.js";
 
@@ -7,7 +7,7 @@ export default class ProductoController {
     // static persistencia = new ProductoRepositorioFs("data/products.json"); // esto voy a cambiar cuando haya bbdd
     // static servicio = new ProductoServicio(ProductoController.persistencia);
     
-    static persistencia = new ProductoRepositorioMongo(process.env.CONNECTIONSTRING); 
+    static persistencia = new ProductoRepositorioMongo(); 
     static servicio = new ProductoServicio(ProductoController.persistencia);
 
 
@@ -36,6 +36,7 @@ export default class ProductoController {
     static async handleObtenerPorId(request, response) {
         try{
             const id = request.params.pid;
+            console.log(id);
             const producto = await ProductoController.servicio.obtenerPorId(id);
 
             response.send(producto);

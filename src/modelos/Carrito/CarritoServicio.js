@@ -21,7 +21,7 @@ export default class CarritoServicio {
     
     async obtenerPorId(id) {
         try {
-            Validador.castearInt(id);
+            // Validador.castearInt(id); // no necesito castear a int porque no tengo una regla de  negocio que diga eso, mehabia equivocado, solo sucede con archivos eso.
 
             const rta = await this.persistencia.obtenerPorId(id);
             if (rta === undefined) {throw new Error("No existe carrito con ese id");}
@@ -30,13 +30,10 @@ export default class CarritoServicio {
         } catch(error) {throw error;}
     }
                                             // estoy modificando un carrito: o le agrego cantidad o le agrego un producto nuevo
-    async modificar(idCarrito, idProduct) { // logica negocio: 1ero verificar q sean enteros los datos. desp verificar q existan los id en la persistencia. Despues agregarle el producto a carro verificando si existia previamente ya
+    async modificar(idCarrito, idProducto) { // logica negocio: 1ero  verificar q existan los id en la persistencia. Despues agregarle el producto a carro verificando si existia previamente ya
         try {
-            Validador.castearInt(idCarrito);
-            Validador.castearInt(idProduct);
-            
             const carrito = await this.obtenerPorId(idCarrito);
-            const producto = await this.productoServicio.obtenerPorId(idProduct);
+            const producto = await this.productoServicio.obtenerPorId(idProducto);
 
             const indice = this.verificarProductoEnCarrito(carrito, producto)
             
@@ -46,12 +43,38 @@ export default class CarritoServicio {
                 carrito.products[indice].quantity = carrito.products[indice].quantity + 1;
             }
 
-            const rta = await this.persistencia.modificar(carrito);
+            const rta = await this.persistencia.modificar(carrito); // si es mongo rta si no actualizo puede devolver undefined asi q aca podria tirar error.
             return rta;
 
         } catch(error) {throw error;}
     }
 
+    async borrar(id) { 
+        try { 
+            if (id == undefined ) {throw new Error("id debe existir para borrar")};
+
+            const borrado = await this.persistencia.borrar(id);
+            return borrado;
+        } catch (error) {throw error;}
+    }
+
+    async eliminarProductoDeCarrito(idCarrito, idProducto) { 
+        try { 
+            if (idCarrito == undefined || idProducto == undefined) {throw new Error("idCarrito y idProducto debe existir para borrarlo")};
+
+            const carrito = await this.obtenerPorId(idCarrito);
+            const producto = await this.productoServicio.obtenerPorId(idProducto);
+
+            const indice = this.verificarProductoEnCarrito(carrito, producto)
+            if (indice == -1) { 
+                throw new Error("El producto que intentas borrar no se encuentra dentro del carrito")
+            } else {
+                carrito.products.splice(indice, 1);// elimina 1 elemento a partir de ese indice incluyendolo.
+                const borrado = await this.persistencia.modificar(carrito);    
+                return borrado;
+            }
+        } catch (error) {throw error;}
+    }
     ///////
 
     async validarDatosObjeto(products) { // Las reglas de negocio dicen que el array de productos debe tener el sig formato: {productId: 2, quantity: 2}
@@ -79,7 +102,7 @@ export default class CarritoServicio {
 
     validarProductoDeCarrito(p){
         try {
-            if (p.productId == undefined || typeof p.productId !== "number" ) {throw new Error("id para producto de carrito debe existir y ser numerico")}
+            if (p.productId == undefined ) {throw new Error("id para producto de carrito debe existir")}
             if (p.quantity == undefined || typeof p.quantity !== "number" ) {throw new Error("cantidad para producto de carrito debe existir y ser numerico")}
             Validador.validarRangoInt(p.quantity);
             Validador.validarRangoInt(p.productId);
