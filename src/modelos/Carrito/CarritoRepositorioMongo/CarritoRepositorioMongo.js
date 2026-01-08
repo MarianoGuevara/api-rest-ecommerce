@@ -1,62 +1,57 @@
-import {connect} from "mongoose"
-import { carritoColeccion } from "./CarritoMongoSchema.js"
-import CarritoEntidad from "../CarritoEntidad.js"
-
 export default class CarritoRepositorioMongo {
-    constructor() {
-        
+    constructor(carritoColeccion) {
+        this.carritoColeccion = carritoColeccion;
     }
 
     async obtenerTodos() {
         try {
-            const retorno =  await carritoColeccion.find({}).limit(10);
-            console.log(retorno);
+            const retorno =  await this.carritoColeccion.find({}).limit(10);
             return retorno;
 
         } catch (error) {throw error;}
     }
 
+    async obtenerPorIdFull(id) { // este sera
+        try{
+            const retorno = await this.carritoColeccion.findById(id).populate("products.productId");
+            if (retorno == null ) return undefined;
+            else return retorno;
+        } catch (error) { 
+            if(error.name == "CastError") {return undefined}; 
+            throw error; 
+        }
+    }
+
     async obtenerPorId(id) {
         try{
-            const retorno = await carritoColeccion.findById(id);
-            return this.CastearMongoObjACarrito(retorno);
+            const retorno = await this.carritoColeccion.findById(id);
+            if (retorno == null ) return undefined;
+            else return retorno;
         } catch (error) { 
-            if(error.name == "CastError") {error.message = "ese id no pertenece a ningun carrito"}; 
+            if(error.name == "CastError") {return undefined}; 
             throw error; 
         }
     }
 
     async crear(obj) {
         try {
-            const retorno = await carritoColeccion.create(obj);
-            console.log(retorno);
-            return this.CastearMongoObjACarrito(retorno);
+            const retorno = await this.carritoColeccion.create(obj);
+            return retorno;
         }  catch (error) { throw error; }
     }
 
     async modificar(obj) {
         try {
-            const retorno = await carritoColeccion.updateOne(obj);
-            if (retorno.modifiedCount > 0) {return obj}
-            else {return undefined;} 
+            const doc = await this.obtenerPorId(obj.id);
+            doc.products = obj.products;
+            return await doc.save();
         } catch (error) { throw error; }
     }
 
     async borrar(id) {
         try {
-            const retorno = await carritoColeccion.deleteOne({_id : id});
+            const retorno = await this.carritoColeccion.deleteOne({_id : id});
             return retorno;
         } catch (error) { throw error; }
-    }
-    
-    // funciones de mongo 
-
-    CastearMongoObjACarrito(mongoObj) {
-        try{
-            return new CarritoEntidad(
-            mongoObj._id.toString(),
-            mongoObj.products
-        );
-        } catch(e) {throw e;}
     }
 }

@@ -41,6 +41,7 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
     async obtenerPorId(id) {
         try { 
             const producto = await this.persistencia.obtenerPorId(id);
+            
             if (producto === undefined) {throw new Error("No existe producto con ese id")}
 
             return producto;
@@ -50,7 +51,6 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
     async modificar(id, obj) { // reglas negocio: paso a paso logico; obtener prod id original, lo que mando el user actualizarlo, reflejarlo en la persistencia.
         try { 
             let productoOriginal = await this.obtenerPorId(id);
-            console.log(productoOriginal);
 
             if (obj.title !== undefined) {productoOriginal.title = obj.title;}
             if (obj.price !== undefined) {productoOriginal.price = obj.price;}
@@ -80,6 +80,7 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
 
             // borrado literal (solo lo programe para mongo, las reglas de negocio hasta antes establecian que el borrado era logico)
             if (id == undefined ) {throw new Error("id debe existir para borrar")};
+            // await this.obtenerPorId(id);
             const borrado = await this.persistencia.borrar(id);
             return borrado;
         } catch (error) {throw error;}
@@ -98,7 +99,6 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
             if (!datos.category  || typeof datos.category  !== "string") {throw new Error("tiene que haber categoria y ser string");}    
             if (!Array.isArray(datos.thumbnails)) {throw new Error("tiene que haber 'thumbnail y ser array");}  
             else {
-                console.log(datos.thumbnails);
                 for (let i=0; i<datos.thumbnails.length;i++){
                     if (typeof datos.thumbnails[i] !== "string") {throw new Error("cada elemento de thumbnail debe ser string");}
                 }

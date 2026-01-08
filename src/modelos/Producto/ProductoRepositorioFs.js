@@ -58,7 +58,7 @@ export default class ProductoRepositorioFs {
         try{
             let retorno = undefined;
             let p = await this.obtenerTodos();
-            console.log(p);
+    
             for (let i=0; i<p.length; i++) {
                 if (title == p[i].title ) {  // && obj.price == p[i].price
                     retorno = p[i];

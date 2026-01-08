@@ -4,12 +4,13 @@ import ProductoEntidad from "../ProductoEntidad.js"
 
 // todo esto son metodos de odm mongoose, no de mongo crudo.
 export default class ProductoRepositorioMongo {
-    constructor() {
+    constructor(productoColeccion) { // este sera un objeto mongo; una referencia mongoose a la tabla de producto.
+        this.productoColeccion = productoColeccion;
     }
 
     async obtenerTodos() {
         try {
-            const retorno =  await productoColeccion.find({}).limit(10);
+            const retorno =  await this.productoColeccion.find({}).limit(10);
             console.log(retorno);
             return retorno;
 
@@ -18,18 +19,19 @@ export default class ProductoRepositorioMongo {
 
     async obtenerPorId(id) {
         try{
-            const retorno = await productoColeccion.findById(id);
-            return this.CastearMongoObjAProducto(retorno);
+            const retorno = await this.productoColeccion.findById(id);
+            if (retorno == null) return undefined;
+            else return retorno;
         } catch (error) { 
-            if(error.name == "CastError") {error.message = "ese id no pertenece a ningun producto"}; 
+            if(error.name == "CastError") {return undefined}; 
             throw error; 
         }
     }
 
     async obtenerPorTitulo(titulo) {
         try{
-            const retorno = await productoColeccion.findOne({title : titulo});
-            if (retorno != null) {return this.CastearMongoObjAProducto(retorno);}
+            const retorno = await this.productoColeccion.findOne({title : titulo});
+            if (retorno != null) {return retorno;}
             else {return undefined;}
             
         } catch (error) { throw error; }
@@ -37,14 +39,18 @@ export default class ProductoRepositorioMongo {
 
     async crear(obj) {
         try {
-            const retorno = await productoColeccion.create(obj); 
-            return this.CastearMongoObjAProducto(retorno); // casteo de objeto mongo a obj normal. el obj mongo tiene mil propiedades mas que no me interesan
+            const retorno = await this.productoColeccion.create(obj); 
+            return retorno; // casteo de objeto mongo a obj normal. el obj mongo tiene mil propiedades mas que no me interesan
         }  catch (error) { throw error; }
     }
 
     async modificar(obj) {
         try {
-            const retorno = await productoColeccion.updateOne(obj);
+            const id = obj.id;
+            delete obj.id;
+
+            const retorno = await this.productoColeccion.updateOne({ _id: id }, { $set: obj });
+
             if (retorno.modifiedCount > 0) {return obj}
             else {return undefined;} 
         } catch (error) { throw error; }
@@ -52,28 +58,8 @@ export default class ProductoRepositorioMongo {
 
     async borrar(id) {
         try {
-            const retorno = await productoColeccion.deleteOne({_id : id});
+            const retorno = await this.productoColeccion.deleteOne({_id : id}); // aunq no pueda borrar no tira error, solo obj con proppiedad deletedCount = 0 o algo asi
             return retorno;
         } catch (error) { throw error; }
-    }
-
-
-
-    // funciones de mongo 
-
-    CastearMongoObjAProducto(mongoObj) {
-        try{
-            return new ProductoEntidad(
-            mongoObj._id.toString(),
-            mongoObj.title,
-            mongoObj.description,
-            mongoObj.code,
-            mongoObj.price,
-            mongoObj.status,
-            mongoObj.stock,
-            mongoObj.category,
-            mongoObj.thumbnails
-        );
-        } catch(e) {throw e;}
     }
 }
