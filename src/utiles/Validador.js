@@ -1,6 +1,6 @@
 export default class Validador {
     static castearInt(val) {
-        if (isNaN(parseInt(val))) {throw new Error("Nan");}
+        if (isNaN(parseInt(val))) {throw new Error(val, " Nan");}
         else {return parseInt(val);}
     }
 

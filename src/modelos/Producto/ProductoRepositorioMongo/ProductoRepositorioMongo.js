@@ -10,13 +10,29 @@ export default class ProductoRepositorioMongo {
 
     async obtenerTodos() {
         try {
-            const retorno =  await this.productoColeccion.find({}).limit(10);
+            const retorno =  await this.productoColeccion.find({});
             console.log(retorno);
             return retorno;
 
         } catch (error) {throw error;}
     }
 
+    async obtenerTodosPaginado(limit,page,sort,category) {
+        try {
+            let categoryMongo = {};
+            if (category == undefined) {category = {};}
+            else {categoryMongo.category = category }
+
+            let mongoSort = {};
+            if (sort === "asc") mongoSort.price = 1;
+            if (sort === "desc") mongoSort.price = -1;
+
+            const retorno =  await this.productoColeccion.paginate(categoryMongo, {limit,page, sort:mongoSort});
+            console.log(retorno);
+            return retorno;
+        } catch (error) {throw error;}
+    }
+    
     async obtenerPorId(id) {
         try{
             const retorno = await this.productoColeccion.findById(id);

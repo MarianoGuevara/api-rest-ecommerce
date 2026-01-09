@@ -4,8 +4,11 @@ import ProductoController from "../controladores/ProductoController.js";
 const router = Router();
 
 router.route("/products")
+//    .get((request, response) => {
+//         ProductoController.handleObtenerTodos(request,response); 
+//     })
     .get((request, response) => {
-        ProductoController.handleObtenerTodos(request,response);
+        ProductoController.handleObtenerTodosPaginado(request,response); // req.query (de la url)
     })
     .post((request, response) => {
         ProductoController.handleCrear(request,response);

@@ -38,6 +38,21 @@ export default class ProductoServicio { // la idea es que pase lo que pase no te
         } catch (error) {throw error;}
     }
 
+    async obtenerTodosPaginado(limit,page,sort,category) { // reglas de negocio establecen que sera una busqueda con paginacion: que limit debe ser un entero como page, category una key que exista en modelo producto y sort (string asc o desc) 
+        try {
+            if (limit == undefined) {limit = 10;} // aplico reglas de negocio (validaciones) a cada key
+            else { Validador.castearInt(limit)};
+
+            if (page == undefined) {page = 1;}
+            else {Validador.castearInt(page)};
+
+            if (sort != "asc" && sort != "desc" && sort != undefined) { throw new Error("Filtro de sort invalido");}
+     
+            const rta = await this.persistencia.obtenerTodosPaginado(limit,page,sort,category);
+            return rta;
+        } catch (error) {throw error;}
+    }
+
     async obtenerPorId(id) {
         try { 
             const producto = await this.persistencia.obtenerPorId(id);

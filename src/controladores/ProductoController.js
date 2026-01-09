@@ -34,6 +34,39 @@ export default class ProductoController {
         }         
     }
 
+    static async handleObtenerTodosPaginado(request, response) {
+        try{
+            const queryParams = request.query;
+
+            const limit = queryParams.limit;
+            const page = queryParams.page;
+            const sort = queryParams.sort;
+            const category = queryParams.category;
+
+            const data = await ProductoController.servicio.obtenerTodosPaginado(limit,page,sort,category);
+
+            const rta = {
+                status: "success", // este es el  formato que mis reglas de negocio establecieron que seria la rta a la paginacion, el repositorio debe encargarse de devolverlo correcto
+                payload: data.docs,
+                totalPages: data.totalPages,
+                prevPage: data.prevPage,
+                nextPage: data.nextPage,
+                page: data.page,
+                hasPrevPage: data.hasPrevPage,
+                hasNextPage: data.hasNextPage,
+                prevLink: data.hasPrevPage
+                    ? `/api/products?page=${data.prevPage}`
+                    : null,
+                nextLink: data.hasNextPage
+                    ? `/api/products?page=${data.nextPage}`
+                    : null
+            };
+            response.json(rta);
+        } catch (error) {
+            response.send({error: error.message});
+        }        
+    }
+
     static async handleObtenerPorId(request, response) {
         try{
             const id = request.params.pid;
